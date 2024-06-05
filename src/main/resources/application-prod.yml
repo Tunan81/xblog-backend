@@ -1,0 +1,35 @@
+# 线上配置文件
+server:
+  port: 8101
+spring:
+  # 数据库配置
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://47.109.104.147:3306/my_oj
+    username: my_oj
+    password: 261615
+    hikari:
+      minimum-idle: 5
+      maximum-pool-size: 15
+      auto-commit: true
+      idle-timeout: 30000
+      pool-name: DatebookHikariCP
+      max-lifetime: 120000
+      connection-timeout: 30000
+      connection-test-query: SELECT 1
+  # Redis 配置
+  data:
+    redis:
+      # 地址
+      host: localhost
+      # 端口，默认为6379
+      port: 6379
+      # 数据库索引
+      database: 0
+      # 密码(如没有密码请注释掉)
+      # password:
+      # 连接超时时间
+      timeout: 10s
+      # 是否开启ssl
+      ssl.enabled: false

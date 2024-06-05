@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/xblog-admin-blog.iml" filepath="$PROJECT_DIR$/xblog-admin-blog.iml" />
+      <module fileurl="file://$PROJECT_DIR$/continew-admin-common/xblog-admin-common.iml" filepath="$PROJECT_DIR$/continew-admin-common/xblog-admin-common.iml" />
+      <module fileurl="file://$PROJECT_DIR$/continew-admin-generator/xblog-admin-generator.iml" filepath="$PROJECT_DIR$/continew-admin-generator/xblog-admin-generator.iml" />
+      <module fileurl="file://$PROJECT_DIR$/continew-admin-system/xblog-admin-system.iml" filepath="$PROJECT_DIR$/continew-admin-system/xblog-admin-system.iml" />
+      <module fileurl="file://$PROJECT_DIR$/continew-admin-webapi/xblog-admin-webapi.iml" filepath="$PROJECT_DIR$/continew-admin-webapi/xblog-admin-webapi.iml" />
+    </modules>
+  </component>
+</project>
