@@ -31,8 +31,8 @@ spring:
 #    url: jdbc:mysql://115.159.96.13:3306/my_oj
 #    username: root
 #    password: 261615
-    url: jdbc:mysql://localhost:3306/my_oj
-    username: root
+    url: jdbc:mysql://47.109.104.147:3306/blog
+    username: blog
     password: 261615
     hikari:
       minimum-idle: 5

@@ -2,8 +2,10 @@ package team.ik.controller;
 
 import com.google.gson.Gson;
 import com.mybatisflex.core.paginate.Page;
+import com.mybatisflex.core.query.QueryWrapper;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
 import team.ik.common.DeleteRequest;
@@ -15,15 +17,19 @@ import team.ik.model.dto.post.PostAddRequest;
 import team.ik.model.dto.post.PostAdminQueryRequest;
 import team.ik.model.dto.post.PostQueryRequest;
 import team.ik.model.dto.post.PostUpdateRequest;
-import team.ik.model.dto.search.SearchRequest;
 import team.ik.model.entity.Post;
+import team.ik.model.entity.PostCategory;
 import team.ik.model.entity.User;
 import team.ik.model.vo.search.PostVO;
-import team.ik.model.vo.search.SearchVO;
+import team.ik.service.IPostCategoryService;
 import team.ik.service.IPostService;
 import team.ik.service.UserService;
 
 import java.util.List;
+
+import static team.ik.model.entity.table.PostCategoryTableDef.POST_CATEGORY;
+import static team.ik.model.entity.table.PostTableDef.POST;
+import static team.ik.model.entity.table.UserTableDef.USER;
 
 /**
  * 帖子表 控制层。
@@ -37,6 +43,9 @@ public class PostController {
 
     @Resource
     private IPostService postService;
+
+    @Resource
+    private IPostCategoryService postCategoryService;
 
     @Resource
     private UserService userService;
@@ -154,6 +163,28 @@ public class PostController {
         ThrowUtils.throwIf(size > 20, HttpCodeEnum.PARAMS_ERROR);
         Page<PostVO> postVOPage = postService.listPostVOByPage(postQueryRequest, request);
         return Result.success(postVOPage);
+    }
+
+    /**
+     *
+     */
+    @PostMapping("/list/{categoryName}")
+    public Result<List<Post>> listPostVO(@PathVariable String categoryName){
+//        PostCategory postCategory = postCategoryService.getOne(new QueryWrapper().eq("name", categoryName));
+//        if (postCategory == null) {
+//            return Result.fail("分类不存在");
+//        }
+        boolean isAll = "all".equals(categoryName);
+        if (isAll){
+            categoryName = "";
+        }
+        QueryWrapper queryWrapper = QueryWrapper.create()
+                .select().from(POST)
+                .leftJoin(POST_CATEGORY).on(POST.CATEGORY_ID.eq(POST_CATEGORY.ID))
+                .leftJoin(USER).on(POST.USER_ID.eq(USER.ID))
+                .like(POST_CATEGORY.NAME.getName(), categoryName);
+        List<Post> list = postService.list(queryWrapper);
+        return Result.success(list);
     }
 
     // endregion

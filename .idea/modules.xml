@@ -7,6 +7,7 @@
       <module fileurl="file://$PROJECT_DIR$/continew-admin-generator/xblog-admin-generator.iml" filepath="$PROJECT_DIR$/continew-admin-generator/xblog-admin-generator.iml" />
       <module fileurl="file://$PROJECT_DIR$/continew-admin-system/xblog-admin-system.iml" filepath="$PROJECT_DIR$/continew-admin-system/xblog-admin-system.iml" />
       <module fileurl="file://$PROJECT_DIR$/continew-admin-webapi/xblog-admin-webapi.iml" filepath="$PROJECT_DIR$/continew-admin-webapi/xblog-admin-webapi.iml" />
+      <module fileurl="file://$PROJECT_DIR$/xblog-backend.iml" filepath="$PROJECT_DIR$/xblog-backend.iml" />
     </modules>
   </component>
 </project>

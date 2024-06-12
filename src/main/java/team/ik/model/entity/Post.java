@@ -42,6 +42,11 @@ public class Post implements Serializable {
      */
     private String content;
 
+    private Long categoryId;
+
+    @Column(ignore = true)
+    private String categoryName;
+
     /**
      * 标签列表（json 数组）
      */

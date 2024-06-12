@@ -30,6 +30,8 @@ public class PostVO implements Serializable {
      */
     private String title;
 
+    private String category;
+
     /**
      * 内容
      */
