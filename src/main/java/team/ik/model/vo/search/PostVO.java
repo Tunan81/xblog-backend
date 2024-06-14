@@ -8,6 +8,7 @@ import team.ik.model.entity.Post;
 import team.ik.model.vo.UserVO;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -32,6 +33,8 @@ public class PostVO implements Serializable {
 
     private String category;
 
+    private String cover;
+
     /**
      * 内容
      */
@@ -52,10 +55,6 @@ public class PostVO implements Serializable {
      */
     private Long userId;
 
-    /**
-     * 创建时间
-     */
-    private Date createTime;
 
     /**
      * 更新时间
@@ -81,6 +80,11 @@ public class PostVO implements Serializable {
      * 是否已收藏
      */
     private Boolean hasFavour;
+
+    /**
+     * 创建时间
+     */
+    private LocalDateTime createTime;
 
     /**
      * 包装类转对象

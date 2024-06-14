@@ -126,8 +126,8 @@ public class PostController {
     /**
      * 根据 id 获取
      */
-    @GetMapping("/get/vo")
-    public Result<PostVO> getPostVOById(long id, HttpServletRequest request) {
+    @GetMapping("/get/vo/{id}")
+    public Result<PostVO> getPostVOById(@PathVariable long id, HttpServletRequest request) {
         if (id <= 0) {
             throw new BusinessException(HttpCodeEnum.PARAMS_ERROR);
         }

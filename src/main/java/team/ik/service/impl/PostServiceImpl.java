@@ -86,14 +86,14 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements IP
         if (loginUser != null) {
             // 获取点赞
             QueryWrapper postThumbQueryWrapper = new QueryWrapper();
-            postThumbQueryWrapper.in("postId", postId);
-            postThumbQueryWrapper.eq("userId", loginUser.getId());
+            postThumbQueryWrapper.in("post_id", postId);
+            postThumbQueryWrapper.eq("user_id", loginUser.getId());
             PostThumb postThumb = postThumbMapper.selectOneByQuery(postThumbQueryWrapper);
             postVO.setHasThumb(postThumb != null);
             // 获取收藏
             QueryWrapper postFavourQueryWrapper = new QueryWrapper();
-            postFavourQueryWrapper.in("postId", postId);
-            postFavourQueryWrapper.eq("userId", loginUser.getId());
+            postFavourQueryWrapper.in("post_id", postId);
+            postFavourQueryWrapper.eq("user_id", loginUser.getId());
             PostFavorite postFavour = postFavourMapper.selectOneByQuery(postFavourQueryWrapper);
             postVO.setHasFavour(postFavour != null);
         }
