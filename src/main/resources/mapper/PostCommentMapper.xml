@@ -2,7 +2,7 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="team.ik.mapper.QuestionCommentMapper">
+<mapper namespace="team.ik.mapper.PostCommentMapper">
     <resultMap id="commentMap" type="team.ik.model.entity.PostComment">
         <id column="id" property="id"/>
         <result column="parent_id" property="parentId"/>
@@ -22,7 +22,7 @@
         SELECT c.*, u.user_name,u.user_avatar FROM post_comment c
         LEFT JOIN user u ON c.user_id = u.id
         WHERE parent_id IS NULL
-        <if test="#{questionId} != null">
+        <if test="#{postId} != null">
             AND post_id = #{postId}
         </if>
     </select>

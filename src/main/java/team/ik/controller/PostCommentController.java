@@ -26,8 +26,9 @@ public class PostCommentController {
 
     // todo 优化
     @GetMapping("/page/{pageNum}/{pageSize}")
-    public Result<List<PostComment>> page(@PathVariable int pageNum, @PathVariable int pageSize, Long questionId) {
-        return Result.success(postCommentService.pageByQid(pageNum, pageSize, questionId));
+    public Result<List<PostComment>> page(@PathVariable int pageNum, @PathVariable int pageSize, Long postId) {
+        System.out.println(postId);
+        return Result.success(postCommentService.pageByQid(pageNum, pageSize, postId));
     }
 
     // todo 优化

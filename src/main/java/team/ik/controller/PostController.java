@@ -128,6 +128,7 @@ public class PostController {
      */
     @GetMapping("/get/vo/{id}")
     public Result<PostVO> getPostVOById(@PathVariable long id, HttpServletRequest request) {
+        System.out.println(id);
         if (id <= 0) {
             throw new BusinessException(HttpCodeEnum.PARAMS_ERROR);
         }
@@ -179,7 +180,7 @@ public class PostController {
             categoryName = "";
         }
         QueryWrapper queryWrapper = QueryWrapper.create()
-                .select().from(POST)
+                .select(POST_CATEGORY.NAME.as("categoryName"),POST.ID,POST.CONTENT,POST.COVER,POST.CREATE_TIME,POST.UPDATE_TIME).from(POST)
                 .leftJoin(POST_CATEGORY).on(POST.CATEGORY_ID.eq(POST_CATEGORY.ID))
                 .leftJoin(USER).on(POST.USER_ID.eq(USER.ID))
                 .like(POST_CATEGORY.NAME.getName(), categoryName);

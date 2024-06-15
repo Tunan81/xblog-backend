@@ -11,7 +11,7 @@ spring:
   freemarker:
     checkTemplateLocation: false
   application:
-    name: hicode-backend
+    name: xBlog-backend
   # 默认 dev 环境
   profiles:
     active: dev

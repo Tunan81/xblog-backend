@@ -45,6 +45,7 @@ public class PostCommentServiceImpl extends ServiceImpl<PostCommentMapper, PostC
     @Override
     public List<PostComment> pageByQid(int pageNum, int pageSize, Long postId) {
         PageHelper.startPage(pageNum, pageSize);
+        System.out.println("sss"+postId);
         List<PostComment> parentList = postCommentMapper.pageByQid(postId);
         log.warn("parentList: {}", parentList);
         //添加评论对应的回复
