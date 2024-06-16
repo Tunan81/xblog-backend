@@ -24,8 +24,8 @@ public class User implements Serializable {
      * id
      */
     @Id(keyType = KeyType.Generator, value = KeyGenerators.snowFlakeId)
-    @ExcelIgnore
-    private Long id;
+    @Column("id")
+    private Long userId;
 
     /**
      * 用户账号
@@ -58,16 +58,21 @@ public class User implements Serializable {
     @ExcelIgnore
     private String userProfile;
 
+//    /**
+//     * 用户角色：user/admin/ban
+//     */
+//    private String userRole;
+
     /**
-     * 用户角色：user/admin/ban
+     * 用户身份
      */
-    @ExcelIgnore
-    private String userRole;
+    private Integer userRole;
 
     /**
      * 用户性别
      */
-    private Integer gender;
+    @Column("gender")
+    private Integer userGender;
 
     /**
      * 地址

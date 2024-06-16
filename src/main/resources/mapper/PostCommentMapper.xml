@@ -12,7 +12,7 @@
         <result column="content" property="content"/>
         <result column="likes" property="likes"/>
         <result column="create_time" property="createTime"/>
-        <association property="user" javaType="team.ik.model.vo.QuestionCommentUserVO">
+        <association property="user" javaType="team.ik.model.vo.PostCommentUserVO">
             <result column="user_name" property="username"/>
             <result column="user_avatar" property="avatar"/>
         </association>

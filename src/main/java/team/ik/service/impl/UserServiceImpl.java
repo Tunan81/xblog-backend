@@ -3,7 +3,6 @@ package team.ik.service.impl;
 import cn.dev33.satoken.stp.SaTokenInfo;
 import cn.dev33.satoken.stp.StpUtil;
 import com.github.xiaoymin.knife4j.core.util.CollectionUtils;
-import com.mybatisflex.core.paginate.Page;
 import com.mybatisflex.core.query.QueryWrapper;
 import com.mybatisflex.spring.service.impl.ServiceImpl;
 import jakarta.annotation.Resource;
@@ -13,14 +12,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
-import org.springframework.web.multipart.MultipartFile;
 import team.ik.common.HttpCodeEnum;
 import team.ik.config.MinioConfig;
 import team.ik.exception.BusinessException;
 import team.ik.mapper.UserMapper;
-import team.ik.model.dto.user.UserQueryRequest;
 import team.ik.model.entity.User;
-import team.ik.model.enums.UserRoleEnum;
 import team.ik.model.vo.LoginUserVO;
 import team.ik.model.vo.UserVO;
 import team.ik.service.UserService;
@@ -90,7 +86,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             if (!saveResult) {
                 throw new BusinessException(HttpCodeEnum.SYSTEM_ERROR, "注册失败，数据库错误");
             }
-            return user.getId();
+            return user.getUserId();
         }
     }
 
@@ -117,7 +113,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             throw new BusinessException(HttpCodeEnum.PARAMS_ERROR, "用户不存在或密码错误");
         }
         // 3. 记录用户的登录态
-        StpUtil.login(user.getId());
+        StpUtil.login(user.getUserId());
         StpUtil.getSession().set("user", user);
         SaTokenInfo tokenInfo = StpUtil.getTokenInfo();
         LoginUserVO loginUserVO = this.getLoginUserVO(user);
@@ -148,31 +144,31 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         if (StpUtil.isLogin()) {
             long userId = StpUtil.getLoginIdAsLong();
             User currentUser = this.getById(userId);
-            if (currentUser == null || currentUser.getId() == null) {
+            if (currentUser == null || currentUser.getUserId() == null) {
                 return null;
             }
             return currentUser;
         }
         return null;
     }
-
-    /**
-     * 是否为管理员
-     */
-    @Override
-    public boolean isAdmin(HttpServletRequest request) {
-        // 仅管理员可查询
-        User user = (User) StpUtil.getSession().get("user");
-        //Use user = (User) session.get("user");
-//        Object userObj = request.getSession().getAttribute(UserConstant.USER_LOGIN_STATE);
-//        User user = (User) userObj;
-        return isAdmin(user);
-    }
-
-    @Override
-    public boolean isAdmin(User user) {
-        return user != null && UserRoleEnum.ADMIN.getValue().equals(user.getUserRole());
-    }
+//
+//    /**
+//     * 是否为管理员
+//     */
+//    @Override
+//    public boolean isAdmin(HttpServletRequest request) {
+//        // 仅管理员可查询
+//        User user = (User) StpUtil.getSession().get("user");
+//        //Use user = (User) session.get("user");
+////        Object userObj = request.getSession().getAttribute(UserConstant.USER_LOGIN_STATE);
+////        User user = (User) userObj;
+//        return isAdmin(user);
+//    }
+//
+//    @Override
+//    public boolean isAdmin(User user) {
+//        return user != null && UserRoleEnum.ADMIN.getValue().equals(user.getUserRole());
+//    }
 
     /**
      * 用户注销
@@ -216,81 +212,81 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         return userList.stream().map(this::getUserVO).collect(Collectors.toList());
     }
 
-    @Override
-    public boolean updatePassword(String oldPassword, String newPassword) {
-        // 1. 校验
-        if (newPassword.length() < 8) {
-            throw new BusinessException(HttpCodeEnum.PARAMS_ERROR, "密码过短");
-        }
-        // 2. 加密
-        String encryptOldPassword = DigestUtils.md5DigestAsHex((SALT + oldPassword).getBytes());
-        String encryptNewPassword = DigestUtils.md5DigestAsHex((SALT + newPassword).getBytes());
-        // 3. 查询用户
-        long userId = StpUtil.getLoginIdAsLong();
-        User user = this.getById(userId);
-        if (user == null) {
-            throw new BusinessException(HttpCodeEnum.NOT_LOGIN_ERROR);
-        }
-        // 4. 校验旧密码
-        if (!encryptOldPassword.equals(user.getUserPassword())) {
-            throw new BusinessException(HttpCodeEnum.PARAMS_ERROR, "旧密码错误");
-        }
-        // 5. 更新密码
-        user.setUserPassword(encryptNewPassword);
-        return this.updateById(user);
-    }
-
-    @Override
-    public String uploadAvatar(MultipartFile file) {
-        try {
-            long userId = StpUtil.getLoginIdAsLong();
-            String fileName = userId + file.getOriginalFilename();
-            // 判断文件是否存在 存在则删除
-            if (minioUtils.isObjectExist(minioConfig.getBucketName(), fileName)) {
-                minioUtils.removeFile(minioConfig.getBucketName(), fileName);
-            }
-            String contentType = file.getContentType();
-            minioUtils.uploadFile(minioConfig.getBucketName(), file, fileName, contentType);
-            String url = "http://47.109.104.147:9001" + "/hicode/" + fileName;
-            User loginUser = this.getById(userId);
-            loginUser.setUserAvatar(url);
-            this.updateById(loginUser);
-            return url;
-        } catch (Exception e) {
-            log.error("上传失败" + e);
-            throw new BusinessException(HttpCodeEnum.SYSTEM_ERROR, "上传失败");
-        }
-    }
-
-
-    @Override
-    public QueryWrapper getQueryWrapper(UserQueryRequest userQueryRequest) {
-        if (userQueryRequest == null) {
-            throw new BusinessException(HttpCodeEnum.PARAMS_ERROR, "请求参数为空");
-        }
-        Long id = userQueryRequest.getId();
-        String userName = userQueryRequest.getUserName();
-        String userProfile = userQueryRequest.getUserProfile();
-        String userRole = userQueryRequest.getUserRole();
-        QueryWrapper queryWrapper = new QueryWrapper();
-        queryWrapper.eq("id", id, id != null);
-        queryWrapper.eq("user_role", userRole, (StringUtils.isNotBlank(userRole)));
-        queryWrapper.like("user_profile", userProfile, StringUtils.isNotBlank(userProfile));
-        queryWrapper.like("user_name", userName, StringUtils.isNotBlank(userName));
-        // todo 排序
-        return queryWrapper;
-    }
-
-    @Override
-    public Page<UserVO> listUserVOByPage(UserQueryRequest userQueryRequest) {
-        long current = userQueryRequest.getPageNumber();
-        long size = userQueryRequest.getPageSize();
-        Page<User> userPage = this.page(new Page<>(current, size),
-                this.getQueryWrapper(userQueryRequest));
-        Page<UserVO> userVOPage = new Page<>(current, size, userPage.getTotalRow());
-        List<UserVO> userVO = this.getUserVO(userPage.getRecords());
-        userVOPage.setRecords(userVO);
-        return userVOPage;
-    }
+//    @Override
+//    public boolean updatePassword(String oldPassword, String newPassword) {
+//        // 1. 校验
+//        if (newPassword.length() < 8) {
+//            throw new BusinessException(HttpCodeEnum.PARAMS_ERROR, "密码过短");
+//        }
+//        // 2. 加密
+//        String encryptOldPassword = DigestUtils.md5DigestAsHex((SALT + oldPassword).getBytes());
+//        String encryptNewPassword = DigestUtils.md5DigestAsHex((SALT + newPassword).getBytes());
+//        // 3. 查询用户
+//        long userId = StpUtil.getLoginIdAsLong();
+//        User user = this.getById(userId);
+//        if (user == null) {
+//            throw new BusinessException(HttpCodeEnum.NOT_LOGIN_ERROR);
+//        }
+//        // 4. 校验旧密码
+//        if (!encryptOldPassword.equals(user.getUserPassword())) {
+//            throw new BusinessException(HttpCodeEnum.PARAMS_ERROR, "旧密码错误");
+//        }
+//        // 5. 更新密码
+//        user.setUserPassword(encryptNewPassword);
+//        return this.updateById(user);
+//    }
+//
+//    @Override
+//    public String uploadAvatar(MultipartFile file) {
+//        try {
+//            long userId = StpUtil.getLoginIdAsLong();
+//            String fileName = userId + file.getOriginalFilename();
+//            // 判断文件是否存在 存在则删除
+//            if (minioUtils.isObjectExist(minioConfig.getBucketName(), fileName)) {
+//                minioUtils.removeFile(minioConfig.getBucketName(), fileName);
+//            }
+//            String contentType = file.getContentType();
+//            minioUtils.uploadFile(minioConfig.getBucketName(), file, fileName, contentType);
+//            String url = "http://47.109.104.147:9001" + "/hicode/" + fileName;
+//            User loginUser = this.getById(userId);
+//            loginUser.setUserAvatar(url);
+//            this.updateById(loginUser);
+//            return url;
+//        } catch (Exception e) {
+//            log.error("上传失败" + e);
+//            throw new BusinessException(HttpCodeEnum.SYSTEM_ERROR, "上传失败");
+//        }
+//    }
+//
+//
+//    @Override
+//    public QueryWrapper getQueryWrapper(UserQueryRequest userQueryRequest) {
+//        if (userQueryRequest == null) {
+//            throw new BusinessException(HttpCodeEnum.PARAMS_ERROR, "请求参数为空");
+//        }
+//        Long id = userQueryRequest.getId();
+//        String userName = userQueryRequest.getUserName();
+//        String userProfile = userQueryRequest.getUserProfile();
+//        String userRole = userQueryRequest.getUserRole();
+//        QueryWrapper queryWrapper = new QueryWrapper();
+//        queryWrapper.eq("id", id, id != null);
+//        queryWrapper.eq("user_role", userRole, (StringUtils.isNotBlank(userRole)));
+//        queryWrapper.like("user_profile", userProfile, StringUtils.isNotBlank(userProfile));
+//        queryWrapper.like("user_name", userName, StringUtils.isNotBlank(userName));
+//        // todo 排序
+//        return queryWrapper;
+//    }
+//
+//    @Override
+//    public Page<UserVO> listUserVOByPage(UserQueryRequest userQueryRequest) {
+//        long current = userQueryRequest.getPageNumber();
+//        long size = userQueryRequest.getPageSize();
+//        Page<User> userPage = this.page(new Page<>(current, size),
+//                this.getQueryWrapper(userQueryRequest));
+//        Page<UserVO> userVOPage = new Page<>(current, size, userPage.getTotalRow());
+//        List<UserVO> userVO = this.getUserVO(userPage.getRecords());
+//        userVOPage.setRecords(userVO);
+//        return userVOPage;
+//    }
 
 }

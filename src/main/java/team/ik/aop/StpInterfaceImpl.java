@@ -35,7 +35,12 @@ public class StpInterfaceImpl implements StpInterface {
     public List<String> getRoleList(Object loginId, String loginType) {
         User user = userService.getById(Long.parseLong((String) loginId));
         List<String> list = new ArrayList<>();
-        list.add(user.getUserRole());
+        Integer integer = user.getUserRole();
+        if (integer == 0) {
+            list.add("admin");
+        } else {
+            list.add("user");
+        }
         return list;
     }
 

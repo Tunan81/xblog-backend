@@ -2,11 +2,13 @@ package team.ik.model.dto.post;
 
 import lombok.Data;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
 
 /**
  * 更新请求
+ * @author tunan
  */
 @Data
 public class PostUpdateRequest implements Serializable {
@@ -31,5 +33,6 @@ public class PostUpdateRequest implements Serializable {
      */
     private List<String> tags;
 
+    @Serial
     private static final long serialVersionUID = 1L;
 }

@@ -9,7 +9,6 @@ import java.time.LocalDateTime;
 
 import lombok.*;
 import team.ik.model.vo.PostCommentUserVO;
-import team.ik.model.vo.QuestionCommentUserVO;
 import team.ik.utils.PageInfo;
 
 /**

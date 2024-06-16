@@ -4,8 +4,12 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import team.ik.common.PageRequest;
 
+import java.io.Serial;
 import java.io.Serializable;
 
+/**
+ * @author tunan
+ */
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class PostAdminQueryRequest extends PageRequest implements Serializable {
@@ -20,5 +24,6 @@ public class PostAdminQueryRequest extends PageRequest implements Serializable {
      */
     private String content;
 
+    @Serial
     private static final long serialVersionUID = 1L;
 }

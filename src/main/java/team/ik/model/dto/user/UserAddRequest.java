@@ -1,5 +1,6 @@
 package team.ik.model.dto.user;
 
+import java.io.Serial;
 import java.io.Serializable;
 import lombok.Data;
 
@@ -29,7 +30,8 @@ public class UserAddRequest implements Serializable {
     /**
      * 用户角色: user, admin
      */
-    private String userRole;
+    private Integer userRole;
 
+    @Serial
     private static final long serialVersionUID = 1L;
 }

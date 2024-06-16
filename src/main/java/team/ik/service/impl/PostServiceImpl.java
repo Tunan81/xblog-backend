@@ -87,13 +87,13 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements IP
             // 获取点赞
             QueryWrapper postThumbQueryWrapper = new QueryWrapper();
             postThumbQueryWrapper.in("post_id", postId);
-            postThumbQueryWrapper.eq("user_id", loginUser.getId());
+            postThumbQueryWrapper.eq("user_id", loginUser.getUserId());
             PostThumb postThumb = postThumbMapper.selectOneByQuery(postThumbQueryWrapper);
             postVO.setHasThumb(postThumb != null);
             // 获取收藏
             QueryWrapper postFavourQueryWrapper = new QueryWrapper();
             postFavourQueryWrapper.in("post_id", postId);
-            postFavourQueryWrapper.eq("user_id", loginUser.getId());
+            postFavourQueryWrapper.eq("user_id", loginUser.getUserId());
             PostFavorite postFavour = postFavourMapper.selectOneByQuery(postFavourQueryWrapper);
             postVO.setHasFavour(postFavour != null);
         }
@@ -144,7 +144,7 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements IP
         // 1. 关联查询用户信息
         Set<Long> userIdSet = postList.stream().map(Post::getUserId).collect(Collectors.toSet());
         Map<Long, List<User>> userIdUserListMap = userService.listByIds(userIdSet).stream()
-                .collect(Collectors.groupingBy(User::getId));
+                .collect(Collectors.groupingBy(User::getUserId));
         // 2. 已登录，获取用户点赞、收藏状态
         Map<Long, Boolean> postIdHasThumbMap = new HashMap<>();
         Map<Long, Boolean> postIdHasFavourMap = new HashMap<>();
@@ -155,13 +155,13 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements IP
             // 获取点赞
             QueryWrapper postThumbQueryWrapper = new QueryWrapper();
             postThumbQueryWrapper.in("post_id", postIdSet);
-            postThumbQueryWrapper.eq("user_id", loginUser.getId());
+            postThumbQueryWrapper.eq("user_id", loginUser.getUserId());
             List<PostThumb> postPostThumbList = postThumbMapper.selectListByQuery(postThumbQueryWrapper);
             postPostThumbList.forEach(postPostThumb -> postIdHasThumbMap.put(postPostThumb.getPostId(), true));
             // 获取收藏
             QueryWrapper postFavourQueryWrapper = new QueryWrapper();
             postFavourQueryWrapper.in("post_id", postIdSet);
-            postFavourQueryWrapper.eq("user_id", loginUser.getId());
+            postFavourQueryWrapper.eq("user_id", loginUser.getUserId());
             List<PostFavorite> postFavourList = postFavourMapper.selectListByQuery(postFavourQueryWrapper);
             postFavourList.forEach(postFavour -> postIdHasFavourMap.put(postFavour.getPostId(), true));
         }

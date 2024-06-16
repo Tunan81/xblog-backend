@@ -113,9 +113,10 @@ public class UserController {
         // 2. 加密
         String encryptPassword = DigestUtils.md5DigestAsHex((SALT + 123456).getBytes());
         user.setUserPassword(encryptPassword);
+        user.setUserAccount(user.getUserName());
         boolean result = userService.save(user);
         ThrowUtils.throwIf(!result, HttpCodeEnum.OPERATION_ERROR);
-        return Result.success(user.getId());
+        return Result.success(user.getUserId());
     }
 
     /**
@@ -123,10 +124,10 @@ public class UserController {
      */
     @PostMapping("/delete")
     public Result<Boolean> deleteUser(@RequestBody DeleteRequest deleteRequest) {
-        if (deleteRequest == null || deleteRequest.getId() <= 0) {
+        if (deleteRequest == null || deleteRequest.getUserId() <= 0) {
             throw new BusinessException(HttpCodeEnum.PARAMS_ERROR);
         }
-        boolean b = userService.removeById(deleteRequest.getId());
+        boolean b = userService.removeById(deleteRequest.getUserId());
         return Result.success(b);
     }
 
@@ -135,7 +136,7 @@ public class UserController {
      */
     @PostMapping("/update")
     public Result<Boolean> updateUser(@RequestBody UserUpdateRequest userUpdateRequest) {
-        if (userUpdateRequest == null || userUpdateRequest.getId() == null) {
+        if (userUpdateRequest == null || userUpdateRequest.getUserId() == null) {
             throw new BusinessException(HttpCodeEnum.PARAMS_ERROR);
         }
         User user = new User();
@@ -175,7 +176,10 @@ public class UserController {
     public Result<Page<User>> listUserByPage(@RequestBody UserQueryRequest userQueryRequest) {
         long pageNumber = userQueryRequest.getPageNumber();
         long pageSize = userQueryRequest.getPageSize();
-        Page<User> userPage = userService.page(new Page<>(pageNumber, pageSize));
+        QueryWrapper queryWrapper = QueryWrapper.create()
+                .like("user_name", userQueryRequest.getUserName())
+                .eq("user_role", userQueryRequest.getUserRole());
+        Page<User> userPage = userService.page(new Page<>(pageNumber, pageSize), queryWrapper);
         return Result.success(userPage);
     }
 
@@ -214,28 +218,11 @@ public class UserController {
             user.setTags(GSON.toJson(tags));
         }
         BeanUtils.copyProperties(userUpdateMyRequest, user);
-        user.setId(loginUser.getId());
+        user.setUserId(loginUser.getUserId());
         System.out.println(user);
         boolean result = userService.updateById(user);
         ThrowUtils.throwIf(!result, HttpCodeEnum.OPERATION_ERROR);
         return Result.success(true);
-    }
-
-    /**
-     * 更改密码
-     */
-    @PostMapping("/update/password")
-    public Result<Boolean> updatePassword(@RequestBody UserUpdatePasswordRequest userUpdatePasswordRequest) {
-        if (userUpdatePasswordRequest == null) {
-            throw new BusinessException(HttpCodeEnum.PARAMS_ERROR);
-        }
-        String oldPassword = userUpdatePasswordRequest.getOldPassword();
-        String newPassword = userUpdatePasswordRequest.getNewPassword();
-        if (StringUtils.isAnyBlank(oldPassword, newPassword)) {
-            throw new BusinessException(HttpCodeEnum.PARAMS_ERROR);
-        }
-        boolean result = userService.updatePassword(oldPassword, newPassword);
-        return Result.success(result);
     }
 
     /**
@@ -246,23 +233,5 @@ public class UserController {
         Long userId = StpUtil.getLoginIdAsLong();
         User loginUser = userService.getById(userId);
         return Result.success(userService.getUserVO(loginUser));
-    }
-
-    /**
-     * 上传头像
-     */
-    @PostMapping("/upload/avatar")
-    public Result<String> uploadAvatar(@RequestParam("file") MultipartFile file) {
-        if (file.isEmpty()) {
-            throw new BusinessException(HttpCodeEnum.PARAMS_ERROR);
-        }
-        // 判断后缀是否是jpg、png、jpeg
-        String fileName = file.getOriginalFilename();
-        String suffix = StringUtils.substringAfterLast(fileName, ".");
-        if (!"jpg".equals(suffix) && !"png".equals(suffix) && !"jpeg".equals(suffix)) {
-            throw new BusinessException(HttpCodeEnum.PARAMS_ERROR);
-        }
-        String avatar = userService.uploadAvatar(file);
-        return Result.success(avatar);
     }
 }

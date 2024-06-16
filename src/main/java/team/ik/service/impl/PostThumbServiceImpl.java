@@ -41,7 +41,7 @@ public class PostThumbServiceImpl extends ServiceImpl<PostThumbMapper, PostThumb
             throw new BusinessException(HttpCodeEnum.NOT_FOUND_ERROR);
         }
         // 是否已点赞
-        long userId = loginUser.getId();
+        long userId = loginUser.getUserId();
         // 每个用户串行点赞
         // 锁必须要包裹住事务方法
         IPostThumbService postThumbService = (IPostThumbService) AopContext.currentProxy();

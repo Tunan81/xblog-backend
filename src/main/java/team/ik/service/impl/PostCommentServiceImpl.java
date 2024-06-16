@@ -79,7 +79,7 @@ public class PostCommentServiceImpl extends ServiceImpl<PostCommentMapper, PostC
         PostComment postComment = new PostComment();
         User user = userService.getLoginUser(request);
         BeanUtils.copyProperties(commentDTO, postComment);
-        postComment.setUid(user.getId());
+        postComment.setUid(user.getUserId());
         postComment.setLikes(0);
         postComment.setCreateTime(LocalDateTime.now());
         if (postCommentMapper.insert(postComment) < 1) {

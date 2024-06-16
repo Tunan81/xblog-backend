@@ -41,7 +41,7 @@ public class PostFavoriteServiceImpl extends ServiceImpl<PostFavoriteMapper, Pos
             throw new BusinessException(HttpCodeEnum.NOT_FOUND_ERROR);
         }
         // 是否已帖子收藏
-        long userId = loginUser.getId();
+        long userId = loginUser.getUserId();
         // 每个用户串行帖子收藏
         // 锁必须要包裹住事务方法
         IPostFavoriteService postFavourService = (IPostFavoriteService) AopContext.currentProxy();

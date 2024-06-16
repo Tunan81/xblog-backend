@@ -47,16 +47,16 @@ public interface UserService extends IService<User> {
      * 获取当前登录用户（允许未登录）
      */
     User getLoginUserPermitNull(HttpServletRequest request);
-
-    /**
-     * 是否为管理员
-     */
-    boolean isAdmin(HttpServletRequest request);
-
-    /**
-     * 是否为管理员
-     */
-    boolean isAdmin(User user);
+//
+//    /**
+//     * 是否为管理员
+//     */
+//    //boolean isAdmin(HttpServletRequest request);
+//
+//    /**
+//     * 是否为管理员
+//     */
+//    //boolean isAdmin(User user);
 
     /**
      * 用户注销
@@ -78,19 +78,19 @@ public interface UserService extends IService<User> {
      */
     List<UserVO> getUserVO(List<User> userList);
 
-    boolean updatePassword(String oldPassword, String newPassword);
+    //boolean updatePassword(String oldPassword, String newPassword);
 
-    String uploadAvatar(MultipartFile file);
+    //String uploadAvatar(MultipartFile file);
 
     /**
      * 获取查询条件
      */
-    QueryWrapper getQueryWrapper(UserQueryRequest userQueryRequest);
+    //QueryWrapper getQueryWrapper(UserQueryRequest userQueryRequest);
 
-    /**
-     * 分页查询用户
-     *
-     * @param userQueryRequest 查询条件
-     */
-    Page<UserVO> listUserVOByPage(UserQueryRequest userQueryRequest);
+//    /**
+//     * 分页查询用户
+//     *
+//     * @param userQueryRequest 查询条件
+//     */
+//    Page<UserVO> listUserVOByPage(UserQueryRequest userQueryRequest);
 }
