@@ -63,10 +63,6 @@ public class PostController {
         }
         Post post = new Post();
         BeanUtils.copyProperties(postAddRequest, post);
-        List<String> tags = postAddRequest.getTags();
-        if (tags != null) {
-            post.setTags(GSON.toJson(tags));
-        }
         postService.validPost(post, true);
         User loginUser = userService.getLoginUser(request);
         post.setUserId(loginUser.getUserId());
@@ -152,19 +148,19 @@ public class PostController {
                 postService.getAdminQueryWrapper(postQueryRequest)));
     }
 
-    /**
-     * 分页获取列表（封装类）
-     */
-    @PostMapping("/list/page/vo")
-    public Result<Page<PostVO>> listPostVOByPage(@RequestBody PostQueryRequest postQueryRequest,
-                                                 HttpServletRequest request) {
-        long current = postQueryRequest.getPageNumber();
-        long size = postQueryRequest.getPageSize();
-        // 限制爬虫
-        ThrowUtils.throwIf(size > 20, HttpCodeEnum.PARAMS_ERROR);
-        Page<PostVO> postVOPage = postService.listPostVOByPage(postQueryRequest, request);
-        return Result.success(postVOPage);
-    }
+//    /**
+//     * 分页获取列表（封装类）
+//     */
+//    @PostMapping("/list/page/vo")
+//    public Result<Page<PostVO>> listPostVOByPage(@RequestBody PostQueryRequest postQueryRequest,
+//                                                 HttpServletRequest request) {
+//        long current = postQueryRequest.getPageNumber();
+//        long size = postQueryRequest.getPageSize();
+//        // 限制爬虫
+//        ThrowUtils.throwIf(size > 20, HttpCodeEnum.PARAMS_ERROR);
+//        Page<PostVO> postVOPage = postService.listPostVOByPage(postQueryRequest, request);
+//        return Result.success(postVOPage);
+//    }
 
     /**
      *

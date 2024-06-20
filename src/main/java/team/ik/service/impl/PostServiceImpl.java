@@ -55,7 +55,6 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements IP
         }
         String title = post.getTitle();
         String content = post.getContent();
-        String tags = post.getTags();
         // 创建时，参数不能为空
         if (add) {
             ThrowUtils.throwIf(StringUtils.isAnyBlank(title, content), HttpCodeEnum.PARAMS_ERROR);
